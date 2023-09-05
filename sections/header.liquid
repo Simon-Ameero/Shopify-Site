@@ -1,0 +1,736 @@
+<link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-cart-notification.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- if settings.predictive_search_enabled -%}
+  <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="{{ 'component-loading-overlay.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- endif -%}
+{%- if section.settings.menu_type_desktop == 'mega' -%}
+  <link rel="stylesheet" href="{{ 'component-mega-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+  <noscript>{{ 'component-mega-menu.css' | asset_url | stylesheet_tag }}</noscript>
+{%- endif -%}
+{%- if section.settings.enable_country_selector or section.settings.enable_language_selector -%}
+  {{ 'component-localization-form.css' | asset_url | stylesheet_tag: preload: true }}
+{%- endif -%}
+
+{%- if settings.cart_type == "drawer" -%}
+  {{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
+  {{ 'component-cart.css' | asset_url | stylesheet_tag }}
+  {{ 'component-totals.css' | asset_url | stylesheet_tag }}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+  {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+  {{ 'component-loading-overlay.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+<noscript>{{ 'component-list-menu.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-search.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-menu-drawer.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-cart-notification.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-cart-items.css' | asset_url | stylesheet_tag }}</noscript>
+
+<style>
+  header-drawer {
+    justify-self: start;
+    margin-left: -1.2rem;
+  }
+
+
+  {%- if section.settings.sticky_header_type == 'reduce-logo-size' -%}
+    .scrolled-past-header .header__heading-logo-wrapper {
+      width: 75%;
+    }
+  {%- endif -%}
+
+  {%- if section.settings.menu_type_desktop != "drawer" -%}
+    @media screen and (min-width: 990px) {
+      header-drawer {
+        display: none;
+      }
+    }
+  {%- endif -%}
+
+  .menu-drawer-container {
+    display: flex;
+  }
+
+  .list-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .list-menu--inline {
+    display: inline-flex;
+    flex-wrap: wrap;
+  }
+
+  summary.list-menu__item {
+    padding-right: 2.7rem;
+  }
+
+  .list-menu__item {
+    display: flex;
+    align-items: center;
+    line-height: calc(1 + 0.3 / var(--font-body-scale));
+    text-decoration: none;
+  }
+
+  .list-menu__item--link {
+    text-decoration: none;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    line-height: calc(1 + 0.8 / var(--font-body-scale));
+  }
+
+  @media screen and (min-width: 750px) {
+    .list-menu__item--link {
+      padding-bottom: 0.5rem;
+      padding-top: 0.5rem;
+    }
+  }
+</style>
+
+{%- style -%}
+  .header {
+    padding-top: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px;
+  }
+
+  .section-header {
+    position: sticky; /* This is for fixing a Safari z-index issue. PR #2147 */
+    margin-bottom: {{ section.settings.margin_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-header {
+      margin-bottom: {{ section.settings.margin_bottom }}px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .header {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<script src="{{ 'details-disclosure.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'details-modal.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'search-form.js' | asset_url }}" defer="defer"></script>
+{%- if settings.cart_type == "drawer" -%}
+  <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+{%- if section.settings.enable_country_selector or section.settings.enable_language_selector -%}
+  <script src="{{ 'localization-form.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden">
+  <symbol id="icon-search" viewbox="0 0 18 19" fill="none">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.03 11.68A5.784 5.784 0 112.85 3.5a5.784 5.784 0 018.18 8.18zm.26 1.12a6.78 6.78 0 11.72-.7l5.4 5.4a.5.5 0 11-.71.7l-5.41-5.4z" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="icon-reset" class="icon icon-close"  fill="none" viewBox="0 0 18 18" stroke="currentColor">
+    <circle r="8.5" cy="9" cx="9" stroke-opacity="0.2"/>
+    <path d="M6.82972 6.82915L1.17193 1.17097" stroke-linecap="round" stroke-linejoin="round" transform="translate(5 5)"/>
+    <path d="M1.22896 6.88502L6.77288 1.11523" stroke-linecap="round" stroke-linejoin="round" transform="translate(5 5)"/>
+  </symbol>
+
+  <symbol id="icon-close" class="icon icon-close" fill="none" viewBox="0 0 18 17">
+    <path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor">
+  </symbol>
+</svg>
+
+{%- liquid
+  for block in section.blocks
+    if block.type == '@app'
+      assign has_app_block = true
+    endif
+  endfor
+-%}
+
+<{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}div{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
+  {%- liquid
+    assign social_links = false
+    assign localization_forms = false
+
+    if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank
+      assign social_links = true
+    endif
+
+    if localization.available_countries.size > 1 and section.settings.enable_country_selector or section.settings.enable_language_selector and localization.available_languages.size > 1
+      assign localization_forms = true
+    endif
+  -%}
+  <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if social_links %} header--has-social{% endif %}{% if shop.customer_accounts_enabled %} header--has-account{% endif %}{% if localization_forms %} header--has-localizations{% endif %}">
+    {%- liquid
+      if section.settings.menu != blank
+        render 'header-drawer'
+      endif
+
+      if section.settings.logo_position == 'top-center' or section.settings.menu == blank
+        render 'header-search', input_id: 'Search-In-Modal-1'
+      endif
+    -%}
+
+    {%- if section.settings.logo_position != 'middle-center' -%}
+      {%- if request.page_type == 'index' -%}
+        <h1 class="header__heading">
+      {%- endif -%}
+          <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
+            {%- if settings.logo != blank -%}
+              <div class="header__heading-logo-wrapper">
+                {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+                {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+                {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
+                {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+                {{ settings.logo | image_url: width: 600 | image_tag:
+                  class: 'header__heading-logo motion-reduce',
+                  widths: widths,
+                  height: logo_height,
+                  width: settings.logo_width,
+                  alt: logo_alt,
+                  sizes: sizes,
+                  preload: true
+                }}
+              </div>
+              <span class="logo-tagline">
+                <svg width="253" height="23" viewBox="0 0 253 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                	<path d="M5.36773 2.87101C5.23705 2.86644 5.1068 2.88845 4.98489 2.93572C4.86297 2.98299 4.75193 3.05453 4.65849 3.146C4.56604 3.24304 4.49414 3.35776 4.4471 3.48326C4.40006 3.60877 4.37886 3.74248 4.38475 3.87639C4.38005 4.0085 4.40202 4.1402 4.44933 4.26364C4.49664 4.38708 4.56834 4.49972 4.66014 4.59484C4.75194 4.68997 4.86196 4.76562 4.98364 4.81729C5.10531 4.86897 5.23616 4.8956 5.36835 4.8956C5.50055 4.8956 5.63139 4.86897 5.75306 4.81729C5.87474 4.76562 5.98476 4.68997 6.07656 4.59484C6.16836 4.49972 6.24006 4.38708 6.28737 4.26364C6.33469 4.1402 6.35665 4.0085 6.35195 3.87639C6.35768 3.7424 6.33628 3.60863 6.28902 3.48312C6.24177 3.35761 6.16964 3.24294 6.07696 3.146C5.98353 3.05453 5.87248 2.98299 5.75057 2.93572C5.62865 2.88845 5.49841 2.86644 5.36773 2.87101Z" fill="#4C5F7F"/>
+                	<path d="M4.7121 18.8363H5.21976C5.33156 18.8371 5.44241 18.8158 5.54594 18.7736C5.64946 18.7314 5.74361 18.6691 5.82295 18.5903C5.9023 18.5116 5.96527 18.4179 6.00824 18.3147C6.05121 18.2115 6.07334 18.1008 6.07333 17.989V8.07709H4.7121V18.8363Z" fill="#4C5F7F"/>
+                	<path d="M13.274 17.2785L9.51382 8.07709H8.02069L12.5884 18.8363H13.8924L18.4365 8.07709H17.033L13.274 17.2785Z" fill="#4C5F7F"/>
+                	<path d="M48.5241 17.1093C48.0329 17.3855 47.5068 17.5947 46.9601 17.7314C46.4349 17.867 45.8949 17.9373 45.3525 17.9404C44.7593 17.967 44.1671 17.8719 43.612 17.6611C43.057 17.4504 42.5509 17.1283 42.1248 16.7148C41.7127 16.2761 41.393 15.759 41.1848 15.1943C40.9766 14.6295 40.8841 14.0287 40.9129 13.4275C40.8949 12.6146 41.085 11.8106 41.4654 11.092C41.8222 10.4416 42.3496 9.90083 42.9908 9.52791C43.6699 9.14123 44.4405 8.94439 45.2218 8.95803C45.7603 8.96023 46.2967 9.02665 46.8195 9.15587C47.3164 9.27036 47.7944 9.45513 48.2392 9.70459L48.2927 9.73446L48.5055 8.51382L48.4781 8.49889C47.4758 7.96857 46.3556 7.70021 45.2218 7.71873C44.1937 7.701 43.1791 7.95465 42.2804 8.4541C41.4323 8.93475 40.7341 9.64112 40.2634 10.4947C39.7654 11.4171 39.5146 12.4528 39.5355 13.5009C39.5138 14.5378 39.7607 15.5626 40.2522 16.4759C40.7206 17.3205 41.4209 18.0135 42.2704 18.473C43.1996 18.9624 44.2378 19.2077 45.2878 19.186C45.9151 19.1825 46.5394 19.0988 47.1455 18.9371C47.7041 18.8017 48.2366 18.5756 48.722 18.2677L48.7456 18.2528L48.5801 17.0769L48.5241 17.1093Z" fill="#4C5F7F"/>
+                	<path d="M51.6279 18.8351H52.1356C52.2469 18.8351 52.3571 18.8131 52.4599 18.7706C52.5627 18.728 52.6561 18.6656 52.7348 18.5869C52.8134 18.5082 52.8759 18.4148 52.9184 18.312C52.961 18.2092 52.9829 18.099 52.9829 17.9877V1.03448H51.6279V18.8351Z" fill="#4C5F7F"/>
+                	<path d="M0.234375 18.8351H0.742039C0.853314 18.8351 0.9635 18.8131 1.06631 18.7706C1.16911 18.728 1.26252 18.6656 1.34121 18.5869C1.41989 18.5082 1.4823 18.4148 1.52489 18.312C1.56747 18.2092 1.58939 18.099 1.58939 17.9877V1.03448H0.234375V18.8351Z" fill="#4C5F7F"/>
+                	<path d="M63.3867 8.36697C62.6315 7.92935 61.7707 7.70768 60.8981 7.72617C59.9423 7.71125 59.0018 7.96751 58.1856 8.46527C57.3881 8.96315 56.7405 9.66794 56.3117 10.5046C55.8449 11.4249 55.6104 12.4454 55.6286 13.4772C55.6042 14.5313 55.8505 15.574 56.3441 16.5058C56.8121 17.3568 57.5223 18.0497 58.3847 18.4966C59.3549 18.9778 60.4276 19.2157 61.5103 19.1897C62.2256 19.1893 62.9382 19.1007 63.6318 18.9259C64.2503 18.7786 64.8463 18.5489 65.4036 18.2428L65.4285 18.2278L65.2394 17.0445L65.1859 17.0732C64.0682 17.6666 62.8206 17.9732 61.5551 17.9653C60.3688 18.0234 59.2041 17.633 58.2926 16.8716C57.8812 16.482 57.5522 16.0137 57.3252 15.4945C57.0982 14.9753 56.9778 14.4158 56.9712 13.8492H65.6027V13.8094C65.6176 13.6352 65.6288 13.4685 65.6363 13.3117C65.6438 13.1549 65.6475 12.9969 65.6475 12.8389C65.6678 11.9081 65.4634 10.9862 65.0515 10.1513C64.675 9.41029 64.0971 8.79056 63.3842 8.36323M64.3348 12.753H56.9687C57.0431 11.7023 57.4834 10.7108 58.213 9.95093C58.5551 9.6035 58.9645 9.32951 59.4161 9.14574C59.8677 8.96196 60.3521 8.87225 60.8396 8.8821C61.2876 8.866 61.7343 8.93973 62.1533 9.09893C62.5724 9.25813 62.9554 9.49959 63.2797 9.80908C63.9348 10.4815 64.3063 11.38 64.3174 12.3188C64.3298 12.4532 64.3373 12.5975 64.3385 12.753" fill="#4C5F7F"/>
+                	<path d="M102.577 8.36697C101.822 7.92935 100.961 7.70768 100.089 7.72617C99.1328 7.71111 98.1923 7.96739 97.3762 8.46527C96.5786 8.9631 95.931 9.6679 95.5023 10.5046C95.0355 11.4249 94.8009 12.4454 94.8192 13.4772C94.795 14.5314 95.0418 15.5742 95.5359 16.5058C96.0039 17.3568 96.7141 18.0497 97.5765 18.4966C98.5467 18.9778 99.6194 19.2157 100.702 19.1897C101.415 19.189 102.126 19.1004 102.817 18.9259C103.436 18.7788 104.032 18.549 104.589 18.2428L104.614 18.2278L104.425 17.0445L104.371 17.0732C103.254 17.6666 102.006 17.9732 100.741 17.9653C99.5544 18.0234 98.3897 17.633 97.4782 16.8716C97.0661 16.4829 96.7362 16.0155 96.5081 15.497C96.2801 14.9784 96.1585 14.4194 96.1506 13.853H104.797V13.8132C104.811 13.6427 104.822 13.476 104.829 13.3154C104.837 13.1549 104.841 13.0031 104.841 12.8426C104.861 11.9119 104.657 10.99 104.246 10.155C103.869 9.41406 103.29 8.79434 102.577 8.36697ZM103.529 12.7568H96.163C96.2368 11.7058 96.6772 10.7142 97.4073 9.95466C97.7493 9.60717 98.1587 9.33315 98.6104 9.14937C99.062 8.96558 99.5464 8.87591 100.034 8.88583C100.482 8.86974 100.929 8.94346 101.348 9.10267C101.767 9.26187 102.15 9.50332 102.474 9.81281C103.129 10.4854 103.5 11.3839 103.51 12.3225C103.524 12.4569 103.532 12.6025 103.533 12.7568" fill="#4C5F7F"/>
+                	<path d="M208.867 8.36697C208.112 7.92935 207.251 7.70768 206.379 7.72617C205.423 7.71111 204.482 7.96739 203.666 8.46526C202.868 8.96286 202.221 9.66772 201.792 10.5046C201.325 11.4249 201.091 12.4454 201.109 13.4772C201.085 14.5314 201.332 15.5742 201.826 16.5058C202.294 17.357 203.004 18.05 203.866 18.4966C204.837 18.9779 205.909 19.2157 206.992 19.1897C207.705 19.189 208.416 19.1004 209.107 18.9259C209.726 18.779 210.322 18.5492 210.879 18.2428L210.905 18.2278L210.716 17.0445L210.663 17.0731C209.545 17.6667 208.297 17.9732 207.032 17.9653C205.846 18.0234 204.681 17.633 203.769 16.8716C203.357 16.4829 203.027 16.0155 202.799 15.497C202.571 14.9784 202.45 14.4194 202.442 13.853H211.073V13.8132C211.087 13.6427 211.098 13.476 211.106 13.3154C211.113 13.1549 211.117 13.0094 211.117 12.8426C211.137 11.912 210.933 10.9901 210.522 10.155C210.145 9.41406 209.567 8.79434 208.855 8.36697M209.805 12.7568H202.439C202.513 11.7059 202.953 10.7142 203.683 9.95466C204.026 9.60729 204.435 9.33335 204.887 9.14957C205.338 8.9658 205.823 8.87606 206.31 8.88583C206.758 8.86974 207.205 8.94346 207.624 9.10267C208.043 9.26187 208.426 9.50332 208.75 9.81281C209.405 10.4854 209.776 11.384 209.787 12.3225C209.8 12.4569 209.808 12.6025 209.809 12.7568" fill="#4C5F7F"/>
+                	<path d="M27.3778 8.36697C26.6227 7.92935 25.7618 7.70768 24.8893 7.72617C23.9334 7.71111 22.9929 7.96739 22.1768 8.46526C21.3792 8.9631 20.7316 9.6679 20.3029 10.5046C19.8361 11.4249 19.6015 12.4454 19.6198 13.4772C19.5956 14.5314 19.8424 15.5742 20.3365 16.5058C20.8045 17.3568 21.5147 18.0497 22.3771 18.4966C23.3473 18.9779 24.42 19.2157 25.5027 19.1897C26.216 19.189 26.9264 19.1004 27.618 18.9259C28.2366 18.7788 28.8326 18.549 29.3898 18.2428L29.4147 18.2278L29.2256 17.0445L29.1721 17.0731C28.0544 17.6666 26.8068 17.9732 25.5413 17.9653C24.355 18.0234 23.1903 17.633 22.2788 16.8716C21.8667 16.4829 21.5368 16.0155 21.3087 15.497C21.0807 14.9784 20.9591 14.4194 20.9512 13.853H29.5827V13.8132C29.5976 13.6427 29.6076 13.476 29.615 13.3154C29.6225 13.1549 29.6262 13.0031 29.6262 12.8426C29.6471 11.9119 29.4431 10.99 29.0315 10.155C28.6549 9.41402 28.077 8.79429 27.3641 8.36697M28.3148 12.7568H20.9487C21.0225 11.7058 21.4628 10.7142 22.1929 9.95466C22.5361 9.60571 22.947 9.33074 23.4005 9.14671C23.8539 8.96267 24.3403 8.87346 24.8296 8.88459C25.2775 8.86849 25.7242 8.94222 26.1433 9.10142C26.5623 9.26062 26.9453 9.50208 27.2696 9.81157C27.9244 10.4841 28.2955 11.3827 28.3061 12.3213C28.3197 12.4556 28.3272 12.6012 28.3285 12.7555" fill="#4C5F7F"/>
+                	<path d="M77.9522 10.3267C77.5548 9.56377 76.9623 8.91977 76.2351 8.46029C75.4726 7.97925 74.5883 7.72666 73.6868 7.73239C72.7178 7.72131 71.7656 7.98537 70.9407 8.49389C70.129 8.99901 69.459 9.70202 68.9934 10.537C68.501 11.4297 68.2501 12.4354 68.2655 13.4548C68.2488 14.4796 68.4833 15.493 68.9486 16.4062C69.3795 17.245 70.0313 17.9502 70.8337 18.4456C71.6545 18.9419 72.5983 19.1976 73.5574 19.1834C74.4979 19.1979 75.4234 18.9455 76.2263 18.4555C76.9624 17.9925 77.5596 17.339 77.9546 16.5642L77.9683 17.9939C77.9709 18.2169 78.0611 18.43 78.2194 18.5871C78.3777 18.7442 78.5914 18.8328 78.8144 18.8338H79.286V8.07581H77.9783L77.9522 10.3267ZM73.846 17.9616C73.0805 17.9761 72.3265 17.7738 71.6711 17.378C71.0425 16.9863 70.5303 16.4333 70.1879 15.7766C69.8187 15.0601 69.6328 14.2632 69.6466 13.4573C69.6302 12.6475 69.8163 11.8464 70.1879 11.1268C70.5321 10.4743 71.0441 9.92534 71.6711 9.53659C72.3262 9.13981 73.0803 8.93663 73.846 8.95053C74.6043 8.93788 75.3506 9.1402 75.9986 9.5341C76.6252 9.92336 77.1371 10.4722 77.4818 11.1243C77.8534 11.844 78.0394 12.645 78.0231 13.4548C78.0367 14.2607 77.8508 15.0575 77.4818 15.7741C77.1393 16.4308 76.6272 16.9838 75.9986 17.3755C75.3506 17.7694 74.6043 17.9717 73.846 17.9591" fill="#4C5F7F"/>
+                	<path d="M113.586 16.9749C113.54 18.0463 113.345 19.1061 113.007 20.1241C112.699 21.0976 112.247 22.0201 111.669 22.8615L111.62 22.9299H112.729L112.741 22.915C113.18 22.417 113.55 21.862 113.841 21.2651C114.171 20.6007 114.435 19.9061 114.631 19.1909C114.832 18.4702 114.958 17.7304 115.005 16.9836L113.586 16.9749Z" fill="#4C5F7F"/>
+                	<path d="M128.963 12.7356C128.223 12.5755 127.52 12.2779 126.89 11.8584C126.705 11.7091 126.558 11.5189 126.461 11.3029C126.363 11.0869 126.317 10.8511 126.326 10.6141C126.319 10.3644 126.375 10.117 126.491 9.89549C126.606 9.67397 126.777 9.48572 126.985 9.3487C127.536 9.01223 128.176 8.85083 128.821 8.88583C129.36 8.8864 129.897 8.95922 130.417 9.10233C130.92 9.23652 131.399 9.44853 131.837 9.73069L131.89 9.76553L132.127 8.57974L132.102 8.56356C131.636 8.29151 131.133 8.08746 130.609 7.9576C130.038 7.80483 129.449 7.72703 128.858 7.72617C127.864 7.67791 126.881 7.96154 126.066 8.53246C125.727 8.78541 125.454 9.11648 125.27 9.49753C125.086 9.87857 124.997 10.2983 125.011 10.7211C124.996 11.086 125.059 11.4499 125.195 11.7887C125.331 12.1276 125.538 12.4337 125.801 12.6871C126.577 13.306 127.484 13.7397 128.454 13.955C129.241 14.1289 129.991 14.4411 130.668 14.877C130.857 15.0279 131.008 15.2213 131.108 15.4414C131.208 15.6616 131.254 15.9022 131.243 16.1437C131.248 16.4156 131.182 16.6841 131.054 16.9237C130.925 17.1633 130.737 17.3659 130.508 17.5124C129.895 17.8871 129.183 18.0671 128.466 18.0288C127.243 18.0014 126.053 17.6249 125.037 16.9437L124.98 16.9039L124.766 18.1358L124.788 18.1519C125.298 18.4909 125.861 18.7432 126.453 18.8985C127.107 19.0871 127.785 19.1834 128.466 19.1847C129.532 19.2322 130.584 18.9337 131.466 18.3336C131.829 18.0819 132.125 17.7444 132.326 17.3511C132.528 16.9578 132.629 16.5208 132.621 16.079C132.637 15.7027 132.571 15.3274 132.43 14.9785C132.288 14.6296 132.072 14.3153 131.798 14.057C130.96 13.4141 129.991 12.9627 128.96 12.7344" fill="#4C5F7F"/>
+                	<path d="M144.618 10.3267C144.22 9.56394 143.628 8.92 142.901 8.46029C142.138 7.97925 141.254 7.72666 140.352 7.73239C139.383 7.72131 138.431 7.98537 137.606 8.49389C136.793 9.00067 136.122 9.70586 135.656 10.5432C135.164 11.4359 134.913 12.4417 134.929 13.461C134.912 14.4859 135.146 15.4992 135.612 16.4124C136.042 17.2514 136.694 17.9567 137.497 18.4518C138.318 18.9482 139.261 19.2038 140.22 19.1897C141.16 19.2017 142.083 18.9476 142.884 18.4568C143.621 17.9937 144.218 17.3402 144.613 16.5655L144.625 17.9952C144.628 18.2183 144.719 18.4313 144.877 18.5884C145.036 18.7455 145.249 18.8341 145.473 18.835H145.944V8.07581H144.639L144.618 10.3267ZM140.504 17.9616C139.739 17.9761 138.985 17.7738 138.329 17.378C137.701 16.9864 137.188 16.4334 136.846 15.7766C136.477 15.06 136.291 14.2632 136.305 13.4573C136.288 12.6475 136.474 11.8465 136.846 11.1268C137.19 10.4743 137.702 9.92534 138.329 9.53659C138.986 9.15406 139.733 8.95253 140.493 8.95253C141.253 8.95253 142 9.15406 142.657 9.53659C143.283 9.92585 143.795 10.4746 144.14 11.1268C144.511 11.8465 144.698 12.6475 144.681 13.4573C144.695 14.2632 144.509 15.06 144.14 15.7766C143.797 16.4333 143.285 16.9863 142.657 17.378C142.009 17.7718 141.262 17.9742 140.504 17.9616Z" fill="#4C5F7F"/>
+                	<path d="M152.483 3.10371C152.738 2.77009 153.072 2.50583 153.456 2.33516C153.839 2.16449 154.26 2.0929 154.678 2.12695C155.32 2.13118 155.954 2.26359 156.544 2.51641L156.595 2.53881L156.761 1.38039L156.732 1.36546C156.42 1.22422 156.093 1.11821 155.757 1.04941C155.373 0.965853 154.981 0.924134 154.588 0.924982C154.007 0.888845 153.425 0.988009 152.888 1.21469C152.351 1.44137 151.874 1.7894 151.494 2.23147C150.711 3.35891 150.337 4.71974 150.434 6.08872V8.07956H148.182V9.26162H150.434V18.8425H150.941C151.166 18.8422 151.381 18.7528 151.54 18.594C151.699 18.4351 151.788 18.2198 151.789 17.9952V9.26162H155.397V8.07582H151.789V6.21688C151.709 5.13453 151.949 4.05257 152.481 3.10619" fill="#4C5F7F"/>
+                	<path d="M195.822 8.4628C194.997 7.96271 194.048 7.70645 193.084 7.7237C192.155 7.70985 191.241 7.95873 190.448 8.44164C189.718 8.8952 189.118 9.53006 188.706 10.2844V1.03448H187.351V18.8351H187.822C188.046 18.8344 188.26 18.746 188.418 18.5888C188.577 18.4316 188.667 18.2184 188.67 17.9952L188.682 16.6091C189.085 17.3915 189.697 18.0465 190.45 18.5011C191.204 18.9557 192.069 19.192 192.949 19.1835C193.921 19.1939 194.876 18.9305 195.705 18.4232C196.524 17.9188 197.196 17.2083 197.655 16.3627C198.137 15.4703 198.384 14.4693 198.371 13.4548C198.39 12.4262 198.156 11.4086 197.688 10.4922C197.256 9.66059 196.609 8.96015 195.814 8.46404M192.817 8.94931C193.575 8.93669 194.322 9.139 194.971 9.53287C195.597 9.92209 196.109 10.4709 196.454 11.1231C196.825 11.843 197.011 12.6439 196.995 13.4536C197.009 14.2595 196.823 15.0563 196.454 15.7729C196.112 16.4295 195.6 16.9825 194.972 17.3743C194.323 17.7681 193.577 17.9704 192.818 17.9578C192.065 17.9715 191.323 17.7739 190.677 17.3875C190.031 17.0011 189.506 16.4413 189.161 15.7717C188.792 15.0552 188.606 14.2583 188.62 13.4523C188.604 12.6426 188.79 11.8415 189.161 11.1218C189.507 10.4676 190.023 9.91839 190.654 9.53163C191.307 9.13857 192.056 8.9364 192.818 8.94806" fill="#4C5F7F"/>
+                	<path d="M220.496 17.3979C219.844 17.7757 219.105 17.9772 218.352 17.9827C218.035 18.0125 217.715 17.965 217.42 17.8443C217.125 17.7237 216.864 17.5333 216.659 17.2897C216.255 16.5844 216.075 15.7737 216.142 14.9641V9.25665H220.079V8.07584H216.142V4.66528H214.787V8.07584H212.921V9.25665H214.787V15.2478C214.701 16.307 214.987 17.363 215.596 18.2341C215.925 18.5728 216.326 18.8342 216.768 18.9995C217.211 19.1647 217.685 19.2297 218.155 19.1897C218.624 19.1897 219.09 19.1308 219.544 19.0142C219.954 18.9143 220.348 18.7581 220.715 18.5501L220.74 18.5352L220.549 17.373L220.496 17.3979Z" fill="#4C5F7F"/>
+                	<path d="M230.339 17.3979C229.687 17.7757 228.948 17.9772 228.195 17.9827C227.878 18.0125 227.558 17.965 227.263 17.8443C226.968 17.7236 226.707 17.5333 226.501 17.2896C226.098 16.5844 225.918 15.7736 225.985 14.9641V9.25659H229.922V8.07578H225.985V4.66522H224.63V8.07578H222.764V9.25659H224.63V15.2478C224.544 16.307 224.83 17.3629 225.439 18.234C225.768 18.5728 226.169 18.8342 226.611 18.9994C227.054 19.1647 227.528 19.2296 227.998 19.1896C228.467 19.1897 228.933 19.1307 229.387 19.0142C229.797 18.9143 230.191 18.7581 230.558 18.5501L230.583 18.5351L230.392 17.373L230.339 17.3979Z" fill="#4C5F7F"/>
+                	<path d="M113.669 8.92816V7.7262C112.878 7.69129 112.089 7.81942 111.35 8.10262C110.611 8.38582 109.938 8.81803 109.373 9.37237C108.178 10.5731 107.756 11.7104 107.756 14.118V18.8351H108.033C108.18 18.8648 108.332 18.858 108.476 18.8153C108.619 18.7725 108.75 18.6951 108.856 18.5899C108.963 18.4847 109.042 18.3548 109.087 18.2119C109.131 18.0689 109.14 17.9171 109.112 17.77V13.9774C109.028 13.2774 109.103 12.5673 109.333 11.9007C109.563 11.234 109.941 10.6282 110.439 10.1289C111.32 9.32333 112.48 8.89266 113.674 8.92816" fill="#4C5F7F"/>
+                	<path d="M164.323 8.36698C163.568 7.9293 162.707 7.70762 161.835 7.72617C160.879 7.71119 159.938 7.96746 159.122 8.46527C158.325 8.96301 157.677 9.66784 157.248 10.5046C156.781 11.4248 156.547 12.4454 156.565 13.4772C156.541 14.5315 156.788 15.5743 157.282 16.5058C157.75 17.3572 158.46 18.0502 159.323 18.4966C160.292 18.9777 161.365 19.2155 162.447 19.1897C163.16 19.189 163.871 19.1004 164.562 18.9259C165.181 18.7789 165.778 18.5492 166.335 18.2428L166.36 18.2278L166.171 17.0445L166.116 17.0732C164.999 17.6667 163.751 17.9732 162.486 17.9653C161.3 18.0231 160.136 17.6327 159.224 16.8716C158.812 16.4833 158.482 16.0159 158.254 15.4973C158.026 14.9787 157.904 14.4195 157.897 13.853H166.527V13.8132C166.542 13.6427 166.552 13.476 166.559 13.3155C166.567 13.1549 166.571 13.0031 166.571 12.8426C166.591 11.9119 166.387 10.99 165.976 10.155C165.6 9.41368 165.022 8.79382 164.308 8.36698M165.259 12.7568H157.894C157.968 11.7058 158.408 10.714 159.138 9.95467C159.481 9.60712 159.89 9.33306 160.342 9.14927C160.793 8.96548 161.278 8.87584 161.765 8.88584C162.213 8.86974 162.66 8.94347 163.079 9.10267C163.498 9.26187 163.881 9.50333 164.205 9.81282C164.859 10.4856 165.23 11.3841 165.24 12.3225C165.254 12.4569 165.262 12.6025 165.263 12.7568" fill="#4C5F7F"/>
+                	<path d="M175.334 16.9749C175.288 18.0462 175.093 19.1061 174.757 20.1241C174.448 21.0976 173.997 22.0201 173.418 22.8615L173.369 22.9299H174.478L174.49 22.915C174.929 22.417 175.299 21.862 175.59 21.2651C175.92 20.6007 176.184 19.9061 176.38 19.1909C176.582 18.4703 176.707 17.7304 176.754 16.9836L175.334 16.9749Z" fill="#4C5F7F"/>
+                	<path d="M175.415 8.92815V7.72618C174.624 7.69113 173.835 7.81919 173.096 8.1024C172.357 8.38561 171.684 8.8179 171.119 9.37235C169.923 10.5731 169.502 11.7103 169.502 14.118V18.8351H169.781C169.927 18.8648 170.079 18.858 170.223 18.8153C170.366 18.7725 170.497 18.6951 170.604 18.5899C170.71 18.4846 170.789 18.3548 170.834 18.2118C170.879 18.0689 170.887 17.9171 170.859 17.77V13.9774C170.775 13.2774 170.85 12.5673 171.08 11.9006C171.31 11.234 171.688 10.6282 172.186 10.1289C173.067 9.32343 174.228 8.89277 175.421 8.92815" fill="#4C5F7F"/>
+                	<path d="M240.013 8.36697C239.258 7.92935 238.397 7.70768 237.524 7.72617C236.568 7.71125 235.628 7.96751 234.812 8.46527C234.014 8.96315 233.367 9.66794 232.938 10.5046C232.471 11.4249 232.237 12.4455 232.255 13.4772C232.23 14.5315 232.477 15.5743 232.971 16.5058C233.439 17.3569 234.149 18.0498 235.011 18.4966C235.981 18.9778 237.054 19.2157 238.136 19.1897C238.852 19.1894 239.564 19.1008 240.258 18.9259C240.876 18.7786 241.472 18.5489 242.03 18.2428L242.056 18.2278L241.866 17.0445L241.812 17.0732C240.694 17.6666 239.447 17.9732 238.181 17.9653C236.995 18.0234 235.83 17.633 234.919 16.8716C234.507 16.4829 234.177 16.0155 233.949 15.497C233.721 14.9784 233.599 14.4194 233.591 13.853H242.224V13.8132C242.239 13.6427 242.249 13.476 242.256 13.3154C242.264 13.1549 242.267 13.0031 242.267 12.8426C242.288 11.9119 242.084 10.9899 241.673 10.155C241.296 9.41402 240.718 8.79429 240.005 8.36697M240.956 12.7568H233.59C233.664 11.7059 234.104 10.7143 234.834 9.95466C235.176 9.60723 235.586 9.33325 236.037 9.14947C236.489 8.96569 236.973 8.87598 237.461 8.88583C237.909 8.86974 238.355 8.94346 238.775 9.10267C239.194 9.26187 239.577 9.50332 239.901 9.81281C240.556 10.4852 240.927 11.3838 240.939 12.3225C240.951 12.4569 240.958 12.6025 240.96 12.7568" fill="#4C5F7F"/>
+                	<path d="M251.104 8.9282V7.72623C250.314 7.6914 249.524 7.81957 248.785 8.10277C248.047 8.38596 247.374 8.81813 246.809 9.37241C245.613 10.5731 245.191 11.7104 245.191 14.1181V18.8351H245.469C245.616 18.8649 245.768 18.8581 245.911 18.8153C246.055 18.7726 246.185 18.6952 246.292 18.5899C246.399 18.4847 246.478 18.3549 246.522 18.2119C246.567 18.0689 246.576 17.9172 246.548 17.77V13.9775C246.463 13.2774 246.538 12.5673 246.768 11.9006C246.998 11.2339 247.376 10.6281 247.874 10.1289C248.755 9.32303 249.916 8.8923 251.109 8.9282" fill="#4C5F7F"/>
+                	<path d="M90.69 9.04513C90.2376 8.61105 89.7035 8.27115 89.1187 8.04517C88.5338 7.81918 87.9099 7.71161 87.2832 7.72869C86.0185 7.69877 84.7935 8.17124 83.8764 9.04264C83.3719 9.52234 82.9823 10.1097 82.7364 10.761C82.4906 11.4123 82.395 12.1107 82.4567 12.8041V18.8326H82.7441C82.8933 18.8543 83.0454 18.8425 83.1894 18.7979C83.3334 18.7533 83.4657 18.6772 83.5765 18.575C83.6686 18.4657 83.7371 18.3386 83.7775 18.2015C83.818 18.0644 83.8296 17.9205 83.8117 17.7787V12.6548C83.7668 12.1357 83.837 11.6131 84.0172 11.1242C84.1974 10.6353 84.4833 10.1923 84.8544 9.82653C85.5174 9.22113 86.3829 8.88547 87.2807 8.88547C88.1786 8.88547 89.044 9.22113 89.7071 9.82653C90.0782 10.1922 90.3641 10.6353 90.5444 11.1242C90.7246 11.613 90.7947 12.1357 90.7498 12.6548V17.7799C90.7318 17.9217 90.7434 18.0657 90.7839 18.2027C90.8244 18.3398 90.8928 18.467 90.9849 18.5763C91.0957 18.6785 91.228 18.7547 91.372 18.7993C91.516 18.8438 91.6682 18.8556 91.8173 18.8338H92.1048V12.8066C92.1634 12.1134 92.0663 11.4159 91.8207 10.7651C91.5751 10.1143 91.187 9.52667 90.6851 9.04513" fill="#4C5F7F"/>
+                	<path d="M251.448 17.2474C251.261 17.2474 251.077 17.303 250.921 17.4072C250.765 17.5113 250.644 17.6594 250.572 17.8327C250.5 18.0059 250.482 18.1966 250.518 18.3805C250.555 18.5644 250.645 18.7333 250.778 18.8659C250.91 18.9985 251.079 19.0888 251.263 19.1254C251.447 19.162 251.638 19.1432 251.811 19.0715C251.984 18.9997 252.132 18.8782 252.236 18.7223C252.341 18.5663 252.396 18.383 252.396 18.1955C252.396 17.9442 252.296 17.7032 252.118 17.5254C251.94 17.3477 251.699 17.2477 251.448 17.2474Z" fill="#4C5F7F"/>
+                </svg>
+              </span>
+            {%- else -%}
+              <span class="h2">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+      {%- if request.page_type == 'index' -%}
+        </h1>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- liquid
+      if section.settings.menu != blank
+        if section.settings.menu_type_desktop == 'dropdown'
+          render 'header-dropdown-menu'
+        elsif section.settings.menu_type_desktop != 'drawer'
+          render 'header-mega-menu'
+        endif
+      endif
+    %}
+
+    {%- if section.settings.logo_position == 'middle-center' -%}
+      {%- if request.page_type == 'index' -%}
+        <h1 class="header__heading">
+      {%- endif -%}
+          <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
+            {%- if settings.logo != blank -%}
+              <div class="header__heading-logo-wrapper">
+                {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+                {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+                {% capture sizes %}(min-width: 750px) {{ settings.logo_width }}px, 50vw{% endcapture %}
+                {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+                {{ settings.logo | image_url: width: 600 | image_tag:
+                  class: 'header__heading-logo',
+                  widths: widths,
+                  height: logo_height,
+                  width: settings.logo_width,
+                  alt: logo_alt,
+                  sizes: sizes,
+                  preload: true
+                }}
+              </div>
+            {%- else -%}
+              <span class="h2">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+      {%- if request.page_type == 'index' -%}
+        </h1>
+      {%- endif -%}
+    {%- endif -%}
+
+    <div class="header__icons{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header__icons--localization header__localization{% endif %}">
+      
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" style="text-decoration:none;" class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}">
+          <span class="visually-hidden">{% render 'icon-account' %}</span>
+          <span class="">
+            {%- liquid
+              if customer
+                echo customer.first_name |  capitalize
+              else
+                echo 'customer.log_in' | t
+              endif
+            -%}
+          </span>
+        </a>
+      {%- endif -%}
+     
+      {% render 'header-search', input_id: 'Search-In-Modal' %}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            {% render block %}
+        {%- endcase -%}
+      {%- endfor -%}
+
+      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
+        {%- liquid
+          if cart == empty
+            render 'icon-cart-empty'
+          else
+            render 'icon-cart'
+          endif
+        -%}
+        <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+        {%- if cart != empty -%}
+          <div class="cart-count-bubble">
+            {%- if cart.item_count < 100 -%}
+              <span aria-hidden="true">{{ cart.item_count }}</span>
+            {%- endif -%}
+            <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+          </div>
+        {%- endif -%}
+      </a>
+    </div>
+    <div class="desktop-localization-wrapper">
+        {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
+          <noscript class="small-hide medium-hide">
+            {%- form 'localization', id: 'HeaderCountryMobileFormNoScript', class: 'localization-form' -%}
+              <div class="localization-form__select">
+                <h2 class="visually-hidden" id="HeaderCountryMobileLabelNoScript">{{ 'localization.country_label' | t }}</h2>
+                <select class="localization-selector link" name="country_code" aria-labelledby="HeaderCountryMobileLabelNoScript">
+                  {%- for country in localization.available_countries -%}
+                    <option value="{{ country.iso_code }}" {%- if country.iso_code == localization.country.iso_code %} selected{% endif %}>
+                      {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                    </option>
+                  {%- endfor -%}
+                </select>
+                {% render 'icon-caret' %}
+              </div>
+              <button class="button button--tertiary">{{ 'localization.update_country' | t }}</button>
+            {%- endform -%}
+          </noscript>
+
+          <localization-form class="small-hide medium-hide no-js-hidden">
+            {%- form 'localization', id: 'HeaderCountryForm', class: 'localization-form' -%}
+              <div>
+                <h2 class="visually-hidden" id="HeaderCountryLabel">{{ 'localization.country_label' | t }}</h2>
+                {%- render 'country-localization', localPosition: 'HeaderCountry' -%}
+              </div>
+            {%- endform -%}
+          </localization-form>
+        {% endif %}
+
+        {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
+          <noscript class="small-hide medium-hide">
+            {%- form 'localization', id: 'HeaderLanguageMobileFormNoScript', class: 'localization-form' -%}
+              <div class="localization-form__select">
+                <h2 class="visually-hidden" id="HeaderLanguageMobileLabelNoScript">{{ 'localization.language_label' | t }}</h2>
+                <select class="localization-selector link" name="locale_code" aria-labelledby="HeaderLanguageMobileLabelNoScript">
+                  {%- for language in localization.available_languages -%}
+                    <option value="{{ language.iso_code }}" lang="{{ language.iso_code }}" {%- if language.iso_code == localization.language.iso_code %} selected{% endif %}>
+                      {{ language.endonym_name | capitalize }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+                {% render 'icon-caret' %}
+              </div>
+              <button class="button button--tertiary">{{ 'localization.update_language' | t }}</button>
+            {%- endform -%}
+          </noscript>
+
+          <localization-form class="small-hide medium-hide no-js-hidden">
+            {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
+              <div>
+                <h2 class="visually-hidden" id="HeaderLanguageLabel">{{ 'localization.language_label' | t }}</h2>
+                {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
+              </div>
+            {%- endform -%}
+          </localization-form>
+        {%- endif -%}
+      </div>
+  </header>
+</{% if section.settings.sticky_header_type != 'none' %}sticky-header{% else %}div{% endif %}>
+<script>
+  let items = document.querySelector(".header__inline-menu").querySelectorAll("details");
+  
+  items.forEach(item => {
+    item.addEventListener("mouseover", () => {
+      item.setAttribute("open", true);
+      item.querySelector("ul").addEventListener("mouseleave", () => {
+        item.removeAttribute("open");
+      });
+    item.addEventListener("mouseleave", () => {
+      item.removeAttribute("open");
+    });
+  });
+  
+  });
+</script>
+{%- if settings.cart_type == "notification" -%}
+  {%- render 'cart-notification', color_scheme: section.settings.color_scheme, desktop_menu_type: section.settings.menu_type_desktop -%}
+{%- endif -%}
+
+{% javascript %}
+  class StickyHeader extends HTMLElement {
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      this.header = document.querySelector('.section-header');
+      this.headerIsAlwaysSticky = this.getAttribute('data-sticky-type') === 'always' || this.getAttribute('data-sticky-type') === 'reduce-logo-size';
+      this.headerBounds = {};
+
+      this.setHeaderHeight();
+
+      window.matchMedia('(max-width: 990px)').addEventListener('change', this.setHeaderHeight.bind(this));
+
+      if (this.headerIsAlwaysSticky) {
+        this.header.classList.add('shopify-section-header-sticky');
+      };
+
+      this.currentScrollTop = 0;
+      this.preventReveal = false;
+      this.predictiveSearch = this.querySelector('predictive-search');
+
+      this.onScrollHandler = this.onScroll.bind(this);
+      this.hideHeaderOnScrollUp = () => this.preventReveal = true;
+
+      this.addEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
+      window.addEventListener('scroll', this.onScrollHandler, false);
+
+      this.createObserver();
+    }
+
+    setHeaderHeight() {
+      document.documentElement.style.setProperty('--header-height', `${this.header.offsetHeight}px`);
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
+      window.removeEventListener('scroll', this.onScrollHandler);
+    }
+
+    createObserver() {
+      let observer = new IntersectionObserver((entries, observer) => {
+        this.headerBounds = entries[0].intersectionRect;
+        observer.disconnect();
+      });
+
+      observer.observe(this.header);
+    }
+
+    onScroll() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (this.predictiveSearch && this.predictiveSearch.isOpen) return;
+
+      if (scrollTop > this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        this.header.classList.add('scrolled-past-header');
+        if (this.preventHide) return;
+        requestAnimationFrame(this.hide.bind(this));
+      } else if (scrollTop < this.currentScrollTop && scrollTop > this.headerBounds.bottom) {
+        this.header.classList.add('scrolled-past-header');
+        if (!this.preventReveal) {
+          requestAnimationFrame(this.reveal.bind(this));
+        } else {
+          window.clearTimeout(this.isScrolling);
+
+          this.isScrolling = setTimeout(() => {
+            this.preventReveal = false;
+          }, 66);
+
+          requestAnimationFrame(this.hide.bind(this));
+        }
+      } else if (scrollTop <= this.headerBounds.top) {
+        this.header.classList.remove('scrolled-past-header');
+        requestAnimationFrame(this.reset.bind(this));
+      }
+
+      this.currentScrollTop = scrollTop;
+    }
+
+    hide() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.add('shopify-section-header-hidden', 'shopify-section-header-sticky');
+      this.closeMenuDisclosure();
+      this.closeSearchModal();
+    }
+
+    reveal() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.add('shopify-section-header-sticky', 'animate');
+      this.header.classList.remove('shopify-section-header-hidden');
+    }
+
+    reset() {
+      if (this.headerIsAlwaysSticky) return;
+      this.header.classList.remove('shopify-section-header-hidden', 'shopify-section-header-sticky', 'animate');
+    }
+
+    closeMenuDisclosure() {
+      this.disclosures = this.disclosures || this.header.querySelectorAll('header-menu');
+      this.disclosures.forEach(disclosure => disclosure.close());
+    }
+
+    closeSearchModal() {
+      this.searchModal = this.searchModal || this.header.querySelector('details-modal');
+      this.searchModal.close(false);
+    }
+  }
+
+  customElements.define('sticky-header', StickyHeader);
+{% endjavascript %}
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if settings.logo %}
+      "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+    {% endif %}
+    "sameAs": [
+      {{ settings.social_twitter_link | json }},
+      {{ settings.social_facebook_link | json }},
+      {{ settings.social_pinterest_link | json }},
+      {{ settings.social_instagram_link | json }},
+      {{ settings.social_tiktok_link | json }},
+      {{ settings.social_tumblr_link | json }},
+      {{ settings.social_snapchat_link | json }},
+      {{ settings.social_youtube_link | json }},
+      {{ settings.social_vimeo_link | json }}
+    ],
+    "url": {{ request.origin | append: page.url | json }}
+  }
+</script>
+
+{%- if request.page_type == 'index' -%}
+  {% assign potential_action_target = request.origin | append: routes.search_url | append: "?q={search_term_string}" %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ request.origin | append: page.url | json }}
+    }
+  </script>
+  
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "class": "section-header",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "select",
+      "id": "logo_position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "t:sections.header.settings.logo_position.options__2.label"
+        },
+        {
+          "value": "top-center",
+          "label": "t:sections.header.settings.logo_position.options__3.label"
+        },
+        {
+          "value": "middle-left",
+          "label": "t:sections.header.settings.logo_position.options__1.label"
+        },
+        {
+          "value": "middle-center",
+          "label": "t:sections.header.settings.logo_position.options__4.label"
+        }
+      ],
+      "default": "middle-left",
+      "label": "t:sections.header.settings.logo_position.label",
+      "info": "t:sections.header.settings.logo_help.content"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "t:sections.header.settings.menu.label"
+    },
+    {
+      "type": "select",
+      "id": "menu_type_desktop",
+      "options": [
+        {
+          "value": "dropdown",
+          "label": "t:sections.header.settings.menu_type_desktop.options__1.label"
+        },
+        {
+          "value": "mega",
+          "label": "t:sections.header.settings.menu_type_desktop.options__2.label"
+        },
+        {
+          "value": "drawer",
+          "label": "t:sections.header.settings.menu_type_desktop.options__3.label"
+        }
+      ],
+      "default": "dropdown",
+      "label": "t:sections.header.settings.menu_type_desktop.label",
+      "info": "t:sections.header.settings.menu_type_desktop.info"
+    },
+    {
+      "type": "select",
+      "id": "sticky_header_type",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.header.settings.sticky_header_type.options__1.label"
+        },
+        {
+          "value": "on-scroll-up",
+          "label": "t:sections.header.settings.sticky_header_type.options__2.label"
+        },
+        {
+          "value": "always",
+          "label": "t:sections.header.settings.sticky_header_type.options__3.label"
+        },
+        {
+          "value": "reduce-logo-size",
+          "label": "t:sections.header.settings.sticky_header_type.options__4.label"
+        }
+      ],
+      "default": "on-scroll-up",
+      "label": "t:sections.header.settings.sticky_header_type.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_line_separator",
+      "default": true,
+      "label": "t:sections.header.settings.show_line_separator.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "background-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header__3.content",
+      "info": "t:sections.header.settings.header__4.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "default": false,
+      "label": "t:sections.header.settings.enable_country_selector.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header__5.content",
+      "info": "t:sections.header.settings.header__6.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "default": false,
+      "label": "t:sections.header.settings.enable_language_selector.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.mobile_layout.content"
+    },
+    {
+      "type": "select",
+      "id": "mobile_logo_position",
+      "options": [
+        {
+          "value": "center",
+          "label": "t:sections.header.settings.mobile_logo_position.options__1.label"
+        },
+        {
+          "value": "left",
+          "label": "t:sections.header.settings.mobile_logo_position.options__2.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.header.settings.mobile_logo_position.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.header.settings.margin_bottom.label",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 36,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 36,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

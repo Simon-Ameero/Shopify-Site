@@ -1,0 +1,88 @@
+{{ 'section-multicolumn.css' | asset_url | stylesheet_tag }}
+{%- style -%}
+  .banner-nav {
+    background: rgba(76, 95, 127, .8);
+    margin-top: -56px;
+    position: relative;
+    z-index: 2;
+  }
+  .section-bottom-nav ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 0;
+  }
+  .section-bottom-nav li a {
+    text-decoration: none;
+    letter-spacing: 0;
+    font-size: 15px;
+    color: #fff;
+    display: block;
+    font-weight: 700;
+    padding: 14px 0 11px;
+    border-bottom: 3px solid transparent;
+  }
+  .section-bottom-nav li a:hover { 
+    border-bottom: 3px solid #fff;
+  }
+  @media screen and (min-width: 750px) { 
+      .section-bottom-nav .grid {
+        justify-content: space-evenly;
+        gap: 20px;
+      }
+  }
+  @media screen and (max-width: 750px) { 
+    .banner-nav {
+      overflow: scroll;
+      margin-top: 0;
+    }
+    .section-bottom-nav .grid {
+      justify-content: space-evenly;
+      min-width: 600px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="banner-nav">
+  <div class="page-width-desktop isolate section-bottom-nav">
+    <div class="grid grid--2-col-tablet-down grid--6-col-desktop">
+            <div class="slide multicolumn-list__item grid__item" {{ block.shopify_attributes }}>
+                <ul class="grid">    
+                {%- for collection in section.settings.banner_nav -%}
+                  <li>
+                    <a class="link" href="{{ collection.url }}">
+                      {{ collection.title }}
+                    </a>
+                  </li>
+                  {%- endfor -%}
+                </ul>
+          </div>
+    </div>
+  </div>
+</div>
+  {% schema %}
+{
+  "name": "Banner Navigation",
+  "class": "menu-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "nav_title",
+      "label": "Menu Section"
+    },
+    {
+           "type": "collection_list",
+           "id": "banner_nav",
+           "label": "Collections",
+           "limit": 8
+         }
+  ]
+}
+    
+{% endschema %}
+
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

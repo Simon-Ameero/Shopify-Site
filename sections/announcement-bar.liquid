@@ -1,0 +1,153 @@
+{%- if  section.blocks.size > 0 and section.settings.show_announcement_bar -%}
+<div class="announcement-bar">
+  <div class="page-width">
+    <div class="swiper-container">
+      <div class="hura-messages swiper-wrapper">
+        {%- for block in section.blocks -%}
+        <div class="hura-message swiper-slide">
+          <strong>{{block.settings.message}}</strong>
+          <span>
+            <a
+                {% if block.settings.link %}
+                  href="{{ block.settings.promo_link }}"
+                {% else %}
+                  role="link" aria-disabled="true"
+                {% endif %}
+                class=""
+              >{{block.settings.promo_link_text}}
+            </a>
+          </span>
+        </div>
+        {%- endfor -%}
+      </div>
+      <div class="hura-swiper-button swiper-button-prev">&nbsp;</div>
+      <div class="hura-swiper-button swiper-button-next">&nbsp;</div>
+    </div>
+  </div>  
+</div>
+<script src="//cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+<script>
+  const swiper = new Swiper('.swiper-container', {
+    {%- if section.settings.autoplay %}
+    autoplay: {delay: {{section.settings.delay}} },
+    {%- endif -%}
+    loop: true,
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  });
+</script>
+<style>
+  .announcement-bar{
+    background:{{section.settings.colorBackground}};
+    overflow: hidden;
+    position: relative;
+    padding: 4px 0;
+  }
+  .announcement-bar .page-width {
+    position: relative;
+  }
+  .announcement-bar .hura-message{
+    text-align:center;
+    color:{{section.settings.colorText}};
+    padding:0;
+  }
+  .hura-message span {padding-left: 5px;}
+  .announcement-bar .swiper-button-next:after, .announcement-bar .swiper-container-rtl .swiper-button-prev:after,
+  .announcement-bar .swiper-button-prev:after, .announcement-bar .swiper-container-rtl .swiper-button-next:after{
+    font-size: 15px;
+    color:{{section.settings.colorText}};
+  }
+  .swiper-container {
+    overflow: hidden;
+  }
+  .swiper-button-prev:after, .swiper-rtl .swiper-button-next:after {
+    left: 40px;
+    position: absolute;
+  }
+  .swiper-button-next:after, .swiper-rtl .swiper-button-prev:after {
+    right: 40px;
+    position: absolute;
+  }
+  .announcement-bar a {
+    text-decoration: underline;
+  }
+  .announcement-bar a:hover {
+    text-decoration: none;
+  }
+
+  @media screen and (max-width: 767px) {
+    .swiper-button-prev:after {left: 5px;}
+    .swiper-button-next:after {right: 5px;}
+    .announcement-bar, .announcement-bar__announcement {display: block;}
+    .announcement-bar .swiper-container {padding: 0 10px;}
+    .hura-message span {display: inline-block;}
+  }
+  
+  {%- if  section.blocks.size < 2 %}
+  .announcement-bar .hura-swiper-button{display:none!important;}
+  {%- endif -%}base
+</style>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Announcement Bar",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_announcement_bar",
+        "label": "Show"
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "Autoplay"
+      },
+      {
+        "type": "text",
+        "id": "delay",
+        "label": "Delay between transitions (in ms)",
+        "default": "5000"
+      },
+      {
+        "type": "color",
+        "id": "colorBackground",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "colorText",
+        "label": "Text color",
+        "default": "#000"
+      }
+],
+"blocks": [
+      {
+        "type": "header",
+        "name": "Message",
+        "settings": [
+            {
+              "id": "message",
+              "type": "textarea",
+             "label": "Message"
+            },
+            {
+              "id": "promo_link_text",
+              "type": "text",
+             "label": "Link Text",
+              "default": "View details"
+            },
+            {
+              "type": "url",
+              "id": "promo_link",
+              "label": "Promo Link"
+            }
+        ]
+      }
+]
+  }
+{% endschema %}

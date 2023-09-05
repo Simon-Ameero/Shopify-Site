@@ -1,0 +1,151 @@
+<style>
+  .image-with-text__text-item {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .testimonial-section {
+    background: rgba(76, 95, 127, .07);
+    position: relative;
+    padding-bottom: 6rem;
+  }
+  .owl-nav button {
+    position: absolute;
+  }
+  .owl-prev {
+    left: -50px;
+    top: 40%;
+  }
+  .owl-next {
+    right: -50px;
+    top: 40%;
+  }
+  .owl-nav span{
+    border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 12px;
+    height: 32px;
+  }
+  .owl-next span {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+.owl-prev.disabled,.owl-next.disabled{
+  opacity: 0.2;
+}
+.owl-prev span {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+.review-text {
+  font-size: 30px;
+  color: #414142;
+  padding-right:6rem;
+  line-height: 4.2rem;
+}
+.reviwer-name {
+  font-size: 20px;
+  margin-top: 30px;
+  color: #414142;
+  letter-spacing: 0;
+}
+  .testimonial-section .image-with-text__content p {
+    font-family: 'ObjektivMk2-Bold' !important;
+  }
+  .testimonial-section h2{
+    font-size: 14px;
+    padding-top: 80px;
+    padding-bottom: 50px;
+    color: #414142;
+    text-transform: uppercase;
+    font-family: 'ObjektivMk2-Bold' !important;
+    margin-bottom: 0;
+  }
+  .testimonial-section a {
+    color: #414142;
+    font-size: 16px;
+  }
+  @media screen and (max-width: 750px) {
+    .owl-nav button {
+    display: none;
+  }
+  }
+</style>
+<div class="testimonial-section">
+<div class="section-testimonial center">
+  <h2 class="image-with-text__heading inline-richtext h2">{{ section.settings.title }}</h2>
+</div>
+<div class="img-with-text page-width">
+  <div class="testimonial-slider owl-carousel">
+  {% for block in section.blocks %}
+  {% case block.type %}
+    {% when 'slide' %}
+      <div class="slide image-with-text__grid grid grid--gapless grid--1-col grid--2-col-tablet" {{ block.shopify_attributes }}>
+        <div class="image-with-text__text-item grid__item">
+        <div class="image-with-text__text rte body review-text">{{ block.settings.review }}</div>
+          <div class="reviwer-name"> - {{ block.settings.reviewer-name }}</div>
+        </div>
+        <div class="image-with-text__media-item image-with-text__media-item--medium image-with-text__media-item--top grid__item">
+    <div class="image-with-text__content image-with-text__content--top image-with-text__content--desktop-left image-with-text__content--mobile-left image-with-text__content--adapt content-container"> 
+          <a  href="{{  block.settings.product.handle }}">  
+      <img src="{{ block.settings.product.featured_image | img_url: '480x' }}" alt="">
+            <p>{{ block.settings.product.title }}</p>
+      </a>
+        </div>
+        </div>
+      </div>
+  {% endcase %}
+{% endfor %}
+  </div>
+</div>
+</div>
+  {% schema %}
+{
+  "name": "Testimonial",
+  "class": "testimonial",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    }
+  ],
+  "blocks": [
+     {
+       "name": "Slide",
+       "type": "slide",
+       "settings": [
+         {
+           "type": "text",
+           "id": "reviewer-name",
+           "label": "Name of the Reviewer"
+           
+         },{
+         	"type": "inline_richtext",
+            "id": "review",
+            "default": "my <i>inline</i> <b>text</b>",
+            "label": "Review"
+         },
+         {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+         }
+         
+       ]
+     }
+   ]
+}
+{% endschema %}
+<script>
+  $(".testimonial-slider").owlCarousel({
+        dots: false,
+        nav: true,
+        margin: 10,
+        lazyLoad: true,
+        nav: true,
+        items: 1
+      });
+</script>

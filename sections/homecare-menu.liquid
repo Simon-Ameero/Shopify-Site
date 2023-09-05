@@ -1,0 +1,109 @@
+{%- style -%}
+  .section-bottom-menu {
+    padding-top: 36px;
+    padding-bottom: 36px;
+  }
+  .section-bottom-menu h3{
+    font-weight: 700;
+  }
+  .section-bottom-menu ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .section-bottom-menu li a {
+    text-decoration: none;
+  }
+  .section-bottom-menu h2 {
+    color: #4C5F7F;
+    font-size: 30px;
+  }
+  @media screen and (min-width: 750px) { 
+      .section-bottom-menu .grid {
+        justify-content: center;
+        gap: 30px;
+      }
+      .section-bottom-menu .slide {
+          border-right: 1px solid #d7d7d7;
+      }
+      .section-bottom-menu .slide:last-child {
+        border-right: none;
+      }
+  }
+  @media screen and (max-width: 750px) {
+    .section-bottom-menu {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+    .slide {
+      padding: 0 15px;
+    } 
+  }
+{%- endstyle -%}
+
+<div class="bottom-nav color-background-2 gradient">
+  <div class="page-width-desktop isolate section-bottom-menu">
+    <div>
+        <h2 class="title inline-richtext center">{{ section.settings.title_menu }}</h2>
+        </div>
+    <div class="grid grid--2-col-tablet-down grid--6-col-desktop">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'slide' %}
+            <div class="slide multicolumn-list__item grid__item" {{ block.shopify_attributes }}>
+                <h3>{{ block.settings.title }}</h3> 
+                <ul class="">    
+                {%- for collection in block.settings.collection_list -%}
+                  <li>
+                    <a class="link" href="{{ collection.url }}">
+                      {{ collection.title }}
+                    </a>
+                  </li>
+                  {%- endfor -%}
+                </ul>
+            
+          </div>
+      {% endcase %}
+    {% endfor %}
+    </div>
+  </div>
+</div>
+  {% schema %}
+{
+  "name": "Menu Section Homecare",
+  "class": "menu-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title_menu",
+      "label": "Menu Section"
+    }
+  ],
+  "blocks": [
+     {
+       "name": "Slide",
+       "type": "slide",
+       "settings": [
+         {
+      "type": "text",
+      "id": "title",
+      "label": "Title of the Menu"
+    },
+         {
+           "type": "collection_list",
+           "id": "collection_list",
+           "label": "Collections",
+           "limit": 8
+         }
+       ]
+     }
+   ]
+}
+    
+{% endschema %}
+
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

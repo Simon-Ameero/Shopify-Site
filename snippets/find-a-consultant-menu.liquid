@@ -1,0 +1,37 @@
+{% unless customer.has_account %}
+  <div class="find-a-consultant-menu">
+    <a href="/pages/find-a-consultant" class="menu-item">
+      <span>Find a Consultant</span>
+    </a>
+  </div>
+{% endunless %}
+
+{% if customer.has_account %}
+ 
+  {% unless customer.metafields.custom.primary_consultant_id %}
+    <div class="find-a-consultant-menu">
+    <a href="/pages/find-a-consultant" class="menu-item">
+      <span>Find a Consultant</span>
+    </a>
+  </div>
+  {% endunless %}
+{% endif %}
+
+<style>
+    .header__icons{
+      align-items: center;
+    }
+  .find-a-consultant {
+    text-align: center;
+    margin: 0px 10px;
+  }
+
+  .menu-item {
+    text-decoration: none;
+  }
+
+  .menu-item:hover,
+  .menu-item:visited {
+    text-decoration: underline;
+  }
+</style>

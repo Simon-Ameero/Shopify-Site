@@ -1,0 +1,17 @@
+{% unless customer.has_account %}
+  <div class="become-a-consultant-menu">
+    <a href="/account/login" class="menu-item">
+      <span>Become a consultant</span>
+    </a>
+  </div>
+{% endunless %}
+
+{% if customer.has_account %}
+  {% unless customer.metafields.custom.consultant_details.value.consultant_id %}
+    <div class="become-a-consultant-menu">
+      <a href="/pages/become-a-consultant" class="menu-item">
+        <span>Become a consultant</span>
+      </a>
+    </div>
+  {% endunless %}
+{% endif %}

@@ -1,0 +1,70 @@
+.newsletter__wrapper.content-container--full-width:after {
+  background: #F2F4F6;
+}
+.newsletter__subheading p {
+    font-size: 16px;
+    color: #414142;
+    font-weight: 700;
+}
+.newsletter-form__field-wrapper .newsletter_email::placeholder {
+  font-size: 14px;
+  color: #6B7280;
+}
+.newsletter_form_section {
+  flex: 0 0 50%;
+  position: relative;
+}
+.newsletter_form_section .success-message {
+    position: absolute;
+    top: 90%;
+    left: 0;
+}
+@media screen and (min-width: 750px) {
+  .newsletter__wrapper {
+    padding-right: 9rem;
+    padding-left: 9rem;
+  }
+  .newsletter__wrapper {
+    padding-right: calc(4rem / var(--font-body-scale));
+    padding-left: calc(4rem / var(--font-body-scale));
+  }
+  .newsletter_flex_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+}
+
+.newsletter__wrapper > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.newsletter__wrapper > * + * {
+  margin-top: 2rem;
+}
+
+.newsletter__wrapper > * + .newsletter-form {
+  margin-top: 3rem;
+}
+
+.newsletter__wrapper .newsletter-form__field-wrapper {
+  max-width: 60rem;
+}
+
+.newsletter-form__field-wrapper .newsletter-form__message {
+  margin-top: 1.5rem;
+}
+
+.newsletter__button {
+  margin-top: 3rem;
+  width: fit-content;
+}
+
+@media screen and (min-width: 750px) {
+  .newsletter__button {
+    flex-shrink: 0;
+    margin: 0 0 0 1rem;
+  }
+}

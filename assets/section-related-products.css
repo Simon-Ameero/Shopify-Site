@@ -1,0 +1,24 @@
+.related-products {
+  display: block;
+}
+
+.related-products__heading {
+  margin: 0 0 3rem;
+}
+
+.related-products .card__information {
+  display: block;  
+}
+.related-products .product-card-wrapper .card-information {
+  text-align: left;
+}
+.related-products .card__information .card__heading {
+  font-size: 1.5rem;
+  letter-spacing: 0;
+  margin-bottom: 4px;
+}
+
+.related-products .product-card-wrapper .price__regular .price-item--regular {
+  font-size: 1.5rem;
+  letter-spacing: 0;
+}

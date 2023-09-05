@@ -1,0 +1,145 @@
+<style>
+  #collection-slider {
+    position: relative;
+  }
+  .owl-nav button {
+    position: absolute;
+  }
+  .owl-prev {
+    left:-30px;
+    top: 40%;
+  }
+  .owl-next {
+    right: -30px;
+    top: 40%;
+  }
+  .owl-nav span{
+    border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 12px;
+    height: 32px;
+  }
+  .owl-next span {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+.owl-prev.disabled,.owl-next.disabled{
+  opacity: 0.2;
+}
+.owl-prev span {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+.shop-all-link {
+  display: flex;
+  justify-content: end;
+  margin-top: -55px;
+}
+  .shop-all-link a {
+    text-decoration: none;
+    color: #414142;
+  }
+  .owl-next
+  a {
+    text-decoration : none;
+  }
+  .card .icon-wrap {
+    display: none;
+  }
+  #collection-slider h3 {
+    font-family: 'ObjektivMk2-Black' !important;
+  }
+  .collection-slider-section .section-header__title {
+    color: #4C5F7F !important;
+  }
+  .shop-all-link a {
+    text-decoration: none;
+    color: #414142;
+  }
+  .shop-all-link {
+    display: flex;
+    justify-content: end;
+    margin-top: -55px;
+  } 
+  @media screen and (max-width: 750px) {
+    .owl-prev {
+    left:0;
+  }
+  .owl-next {
+    right: 0;
+  }
+    .shop-all-link {
+      margin-top: 0;
+      justify-content: center;
+    }
+  }
+}
+</style>
+<div class="collection-slider-section flickity-index-slider collection" >
+<div class="page-width">
+<div class="center">
+<h2 class="section-header__title text-center">{{ section.settings.title }}</h2>
+</div>
+<div class="shop-all-link">
+    <div>
+    <a
+              href="{{ section.settings.btn-url }}"
+            class="no-underline"
+          >{{ section.settings.btn-title }}
+        </a>
+    </div>
+  </div>
+<div id="collection-slider" class="owl-carousel owl-theme text-center">
+{%- for block in section.blocks -%}
+  <div class="item">
+    {% render 'card-collection', card_collection: block.settings.collection , media_aspect_ratio: section.settings.image_ratio, columns: 1 %}
+  </div>
+{%- endfor -%}
+</div>
+</div>
+</div>
+
+{% schema %}
+{
+"name": "Collection Slider",
+"settings": [
+  {
+  "type": "text",
+  "id": "title",
+  "label": "Title",
+  "default": "Featured Collection Slider"
+  },
+  {
+      "type": "text",
+      "id": "btn-title",
+      "default": "View More",
+      "label": "Button Title"
+  },
+  {
+     "type": "url",
+    "id": "btn-url",
+    "label": "Button URL"
+  }
+  ],
+"blocks": [
+  {
+    "type": "collection",
+    "name": "Collection",
+    "settings": [
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Select collection"
+      }
+    ]
+  }
+],
+"presets": [
+{
+"name": "Collection Slider",
+"category": "Slider"
+}
+]
+}
+{% endschema %}

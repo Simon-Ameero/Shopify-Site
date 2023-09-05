@@ -1,0 +1,215 @@
+<style>
+  #homepage-product-slider {
+    position: relative;
+    margin-top: 40px;
+  }
+  #homepage-product-slider h4 {
+    font-size: 16px;
+  }
+  #homepage-product-slider a {
+    text-decoration: none;
+  }
+  .owl-nav button {
+    position: absolute;
+  }
+  .owl-prev {
+    left:-30px;
+    top: 40%;
+  }
+  .owl-next {
+    right: -30px;
+    top: 40%;
+  }
+  .owl-nav span{
+    border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 12px;
+    height: 32px;
+  }
+  .owl-next span {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+.owl-prev.disabled,.owl-next.disabled{
+  opacity: 0.2;
+}
+.owl-prev span {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+.shop-all-link {
+  display: flex;
+  justify-content: end;
+  margin-top: -55px;
+}
+  .shop-all-link a {
+    text-decoration: none;
+    color: #414142;
+  }
+  .owl-next
+  a {
+    text-decoration : none;
+  }
+  @media screen and (max-width: 750px) {
+    .owl-prev {
+    left:0;
+  }
+  .owl-next {
+    right: 0;
+  }
+    .shop-all-link {
+      margin-top: 0;
+      justify-content: center;
+    }
+  }
+</style>
+{%- if section.settings.enable -%}
+<div class="index-section page-width">
+ 
+   {%- if section.settings.show_title -%}
+      <h1 class="section-header__title center">
+         {%- for block in section.blocks -%}
+         {{ section.settings.title_collection }}
+         {%- endfor -%}
+      </h1>
+   {%- endif -%}
+   <div class="shop-all-link">
+    <div>
+       {%- for block in section.blocks -%}
+        <a
+                  href="{{ section.settings.btn-url }}"
+                class="no-underline"
+              >{{ section.settings.btn-title }}
+            </a>
+         {%- endfor -%}
+    </div>
+  </div>
+   <section>
+     <div id="homepage-product-slider" class="owl-carousel owl-theme">
+         {%- for block in section.blocks -%}
+         {%- for product in collections[block.settings.collection].products -%}
+         <div class="item">
+            <!--box-slider--------------->
+            <a href="{{ product.url | within: collection }}">
+            <img class="img-explore" src="{{ product.featured_image | img_url: 'master'}}">
+            <h4>{{ product.title }}</h4>
+            <p>{{ product.price | money }}</p>
+          </a>
+         </div>
+         {% else %}
+            The collection is empty!
+         {%- endfor -%}
+         {%- endfor -%}
+     </div>
+   </section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+   "name": "Product Carousel",
+   "settings": [
+      {
+      "type": "checkbox",
+      "id": "enable",
+      "label": "Enable",
+      "default": true
+      },
+     {
+         "type": "text",
+         "id":"title_collection",
+         "label":"Title",
+         "default":"Collection Title"
+       },
+      {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show title",
+      "default": true
+      },
+      {
+      "type": "checkbox",
+      "id": "arrows",
+      "label": "Show arrows",
+      "default": true
+      },
+      {
+      "type": "checkbox",
+      "id": "dots",
+      "label": "Show Slider Dots",
+      "default": true
+      },
+      {
+      "type": "color",
+      "id": "color_bg--overlay",
+      "label": "Overlay Color",
+      "default": "#000"
+      },
+      {
+      "type": "color",
+      "id": "detail-box",
+      "label": "Detail Box",
+      "default": "#f3f3f3"
+      },
+     {
+       "type": "url",
+      "id": "btn-url",
+      "label": "Button URL"
+     },
+      {
+      "type": "text",
+      "id": "btn-title",
+      "default": "View More",
+      "label": "Button Title"
+      },
+      {
+      "type": "color",
+      "id": "color_bg--buyBtn",
+      "label": "Button Color on Hover",
+      "default": "#CBD5CC"
+      },
+      {
+      "type": "range",
+      "id": "buybtn-radius",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Button Radius",
+      "default": 20
+      },
+      {
+      "type": "range",
+      "id": "card-width",
+      "min": 300,
+      "max": 440,
+      "step": 10,
+      "unit": "px",
+      "label": "Card Width",
+      "default": 350
+      }
+   ],
+   "blocks": [
+      {
+         "type": "collection",
+         "name": "Collection",
+         "limit": 1,
+         "settings": [
+            {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection"
+            }
+
+         ]
+      }
+   ],
+   "presets": [
+      {
+      "name": "Products carousel",
+      "category": "Carousel Sections"
+      }
+   ]
+}
+{% endschema %}

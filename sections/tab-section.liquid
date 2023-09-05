@@ -1,0 +1,45 @@
+<div class="tabbed-section">
+  {% for block in section.blocks %}
+    <div class="tab">
+      <h2>{{ block.settings.tab_title }}</h2>
+      <div class="tab-content">
+        {% assign products = collections[block.settings.tab_collection].products %}
+        <ul class="product-list">
+          {% for product in products %}
+            <li class="product-item">
+              <a href="{{ product.url }}">
+                <img src="{{ product.featured_image.src }}" alt="{{ product.featured_image.alt }}">
+                <h3>{{ product.title }}</h3>
+                <p>{{ product.price | money }}</p>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% schema %}
+{
+  "name": "Tab Section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "tabs",
+      "name": "Tabs",
+      "settings": [
+        {
+          "type": "text",
+          "label": "Tab Title",
+          "id": "tab_title"
+        },
+        {
+          "type": "collection",
+          "label": "Tab Collection",
+          "id": "tab_collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
