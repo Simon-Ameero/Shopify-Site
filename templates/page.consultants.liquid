@@ -19,8 +19,8 @@
                       </div>
                     </div>
                     <div class="consultant-details">
-                      <p class="constant-name">{{ consultantObject[handle]first_name }} {{ consultantObject[handle]last_name }}</p>
-                      <p class="label-section" for="l_name">Consultant ID: <span>{{ consultantObject[handle]consultant_id }}</span></p>
+                      <p class="constant-name">{{ consultantObject[handle].first_name }} {{ consultantObject[handle].last_name }}</p>
+                      <p class="label-section" for="l_name">Consultant ID: <span>{{ consultantObject[handle].consultant_id }}</span></p>
                       <p>Welcome. I’m your Norwex Consultant and I’m here to help with personal service.</p>
                       <!-- <p class="form-data-item">
                         <label class="label-section" for="email">Email:</label>
@@ -176,4 +176,19 @@
   const consultant_id = document.getElementById("consultant-id").value;
   document.cookie = `consultant_id=${consultant_id}; path=/;`;
 
-</script>
+</script>{%- comment -%}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{{ consultantObject[handle]first_name }}"
+  to: "{{ consultantObject[handle].first_name }}"
+  position: 1108..1149
+- from: "{{ consultantObject[handle]last_name }}"
+  to: "{{ consultantObject[handle].last_name }}"
+  position: 1150..1190
+- from: "{{ consultantObject[handle]consultant_id }}"
+  to: "{{ consultantObject[handle].consultant_id }}"
+  position: 1276..1320
+{%- endcomment -%}
